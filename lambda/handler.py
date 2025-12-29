@@ -69,20 +69,26 @@ def main(event, context):
         # Update an item in the table
         body = json.loads(event["body"])
         task_id = body["task_id"]
+        title = body["title"]
         status = body["status"]
 
         # Update item in DynamoDB table
         table.update_item(
             Key={"task_id": task_id},
-            UpdateExpression="SET #status = :status",
-            ExpressionAttributeNames={"#status": "status"},
-            ExpressionAttributeValues={":status": status}
+            UpdateExpression="SET #status = :status, #title = :title",
+            ExpressionAttributeNames={
+                "#status": "status",
+                "#title": "title"},
+            ExpressionAttributeValues={
+                ":status": status,
+                ":title": title
+            }
         )
 
-        return{
+        return {
             "statusCode": 200,
             "headers": {
-                "Content-Type":"application/json"
+                "Content-Type": "application/json"
             },
             "body": json.dumps(body)
         }

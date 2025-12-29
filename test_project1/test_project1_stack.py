@@ -1,10 +1,8 @@
 from aws_cdk import (
     Stack,
-    aws_s3 as s3,
     aws_dynamodb as dynamodb,
     aws_lambda as lambda_,
     aws_apigateway as apigw,
-    aws_iam as iam
 
 )
 import os
