@@ -13,7 +13,7 @@ from constructs import Construct
 class TestProject1Stack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id,description = "CRUD application made using AWS services ",  **kwargs)
 
         table = dynamodb.Table(
             self,
@@ -26,6 +26,7 @@ class TestProject1Stack(Stack):
 
         task_lambda = lambda_.Function(
             self,
+            
             "TasksHandler",
             runtime=lambda_.Runtime.PYTHON_3_10,
             handler="handler.main",
@@ -52,4 +53,4 @@ class TestProject1Stack(Stack):
             table.table_name
         )   
 
-        table_name = os.environ["TABLE_NAME"]
+       
