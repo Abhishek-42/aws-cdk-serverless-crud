@@ -52,7 +52,59 @@ def main(event, context):
             },
             "body": json.dumps(item)
         }
-    
+    elif method == "GET":
+        # Scan all items in the table
+        response = table.scan()
+
+        # Send response back to client
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps(response["Items"])
+        }
+    elif method == "PUT":
+        
+        # Update an item in the table
+        body = json.loads(event["body"])
+        task_id = body["task_id"]
+        status = body["status"]
+
+        # Update item in DynamoDB table
+        table.update_item(
+            Key={"task_id": task_id},
+            UpdateExpression="SET #status = :status",
+            ExpressionAttributeNames={"#status": "status"},
+            ExpressionAttributeValues={":status": status}
+        )
+
+        return{
+            "statusCode": 200,
+            "headers": {
+                "Content-Type":"application/json"
+            },
+            "body": json.dumps(body)
+        }
+
+    elif method == "DELETE":
+        # Delete an item from the table
+        body = json.loads(event["body"])
+        task_id = body["task_id"]
+
+        # Delete item from DynamoDB table
+        table.delete_item(
+            Key={"task_id": task_id}
+        )
+
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps(body)
+        }
+
     else:
         return {
                 "statusCode": 200,
