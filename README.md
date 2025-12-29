@@ -1,58 +1,244 @@
+# Task Management CRUD API
 
-# Welcome to your CDK Python project!
+A serverless task management API built with AWS CDK, Lambda, DynamoDB, and API Gateway. This project demonstrates a complete CRUD (Create, Read, Update, Delete) application using AWS services.
 
-This is a blank project for CDK development with Python.
+## 🚀 Features
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+- **Create Tasks** - Add new tasks with title and category
+- **Read Tasks** - Get all tasks from the database
+- **Update Tasks** - Modify task title and status
+- **Delete Tasks** - Remove tasks from the database
+- **Serverless Architecture** - No server management required
+- **RESTful API** - Standard HTTP methods and responses
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
-
-To manually create a virtualenv on MacOS and Linux:
-
-```
-$ python -m venv .venv
-```
-
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+## 🏗️ Architecture
 
 ```
-$ source .venv/bin/activate
+API Gateway → Lambda Function → DynamoDB Table
 ```
 
-If you are a Windows platform, you would activate the virtualenv like this:
+- **API Gateway**: Handles HTTP requests and routing
+- **Lambda Function**: Processes business logic for CRUD operations
+- **DynamoDB**: NoSQL database for storing task data
+
+## 📋 API Endpoints
+
+### Create Task
+```http
+POST /tasks
+Content-Type: application/json
+
+{
+  "title": "Buy groceries",
+  "category": "shopping"
+}
+```
+
+**Response:**
+```json
+{
+  "task_id": "abc-123-def-456",
+  "title": "Buy groceries",
+  "category": "shopping",
+  "status": "pending"
+}
+```
+
+### Get All Tasks
+```http
+GET /tasks
+```
+
+**Response:**
+```json
+[
+  {
+    "task_id": "abc-123-def-456",
+    "title": "Buy groceries",
+    "category": "shopping",
+    "status": "pending"
+  }
+]
+```
+
+### Update Task
+```http
+PUT /tasks/{id}
+Content-Type: application/json
+
+{
+  "task_id": "abc-123-def-456",
+  "title": "Buy organic groceries",
+  "status": "completed"
+}
+```
+
+**Response:**
+```json
+{
+  "task_id": "abc-123-def-456",
+  "title": "Buy organic groceries",
+  "status": "completed"
+}
+```
+
+### Delete Task
+```http
+DELETE /tasks/{id}
+Content-Type: application/json
+
+{
+  "task_id": "abc-123-def-456"
+}
+```
+
+**Response:**
+```json
+{
+  "task_id": "abc-123-def-456"
+}
+```
+
+## 🧪 Testing the API
+
+### Using curl
+
+**Create a task:**
+```bash
+curl -X POST https://your-api-url/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Learn AWS", "category": "education"}'
+```
+
+**Get all tasks:**
+```bash
+curl -X GET https://your-api-url/tasks
+```
+
+**Update a task:**
+```bash
+curl -X PUT https://your-api-url/tasks/123 \
+  -H "Content-Type: application/json" \
+  -d '{"task_id": "your-task-id", "title": "Master AWS", "status": "completed"}'
+```
+
+**Delete a task:**
+```bash
+curl -X DELETE https://your-api-url/tasks/123 \
+  -H "Content-Type: application/json" \
+  -d '{"task_id": "your-task-id"}'
+```
+
+### Using Postman
+
+1. Import the API endpoints into Postman
+2. Set the base URL to your deployed API Gateway URL
+3. Add `Content-Type: application/json` header
+4. Test each endpoint with the JSON payloads shown above
+
+## 🛠️ Local Development
+
+### Prerequisites
+- Python 3.10+
+- AWS CDK CLI
+- AWS CLI configured with credentials
+
+### Setup
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd test_project1
+
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+# Windows:
+.venv\Scripts\activate
+# macOS/Linux:
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Deploy to AWS
+```bash
+# Bootstrap CDK (first time only)
+cdk bootstrap
+
+# Deploy the stack
+cdk deploy
+
+# Get the API Gateway URL from the output
+```
+
+### Local Testing
+```bash
+# Synthesize CloudFormation template
+cdk synth
+
+# Run tests
+python -m pytest tests/
+```
+
+## 📁 Project Structure
 
 ```
-% .venv\Scripts\activate.bat
+test_project1/
+├── lambda/
+│   └── handler.py          # Lambda function code
+├── test_project1/
+│   └── test_project1_stack.py  # CDK stack definition
+├── tests/                  # Unit tests
+├── app.py                  # CDK app entry point
+├── requirements.txt        # Python dependencies
+└── README.md              # This file
 ```
 
-Once the virtualenv is activated, you can install the required dependencies.
+## 🔧 Configuration
 
+The application uses environment variables for configuration:
+- `TABLE_NAME`: DynamoDB table name (set automatically by CDK)
+
+## 📊 Data Model
+
+Each task has the following structure:
+```json
+{
+  "task_id": "string (UUID)",
+  "title": "string (required)",
+  "category": "string (default: 'general')",
+  "status": "string (default: 'pending')"
+}
 ```
-$ pip install -r requirements.txt
-```
 
-At this point you can now synthesize the CloudFormation template for this code.
+## 🚀 Deployment
 
-```
-$ cdk synth
-```
+This project uses AWS CDK for infrastructure as code. The stack creates:
+- DynamoDB table for task storage
+- Lambda function for business logic
+- API Gateway for HTTP endpoints
+- IAM roles and policies for security
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+## 🤝 Contributing
 
-## Useful commands
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+## 📝 License
 
-Enjoy!
+This project is for educational purposes.
+
+## 🎯 Learning Objectives
+
+This project demonstrates:
+- Serverless architecture patterns
+- RESTful API design
+- AWS service integration
+- Infrastructure as Code with CDK
+- NoSQL database operations
+- HTTP request/response handling
